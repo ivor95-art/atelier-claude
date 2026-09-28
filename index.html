@@ -1,0 +1,1585 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Atelier Claude Données</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800&family=Source+Sans+3:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+/* ============ TOKENS ============ */
+:root{
+  --bg:#eef1f6;
+  --surface:#ffffff;
+  --surface-alt:#f5f7fb;
+  --surface-sunken:#e7ebf1;
+  --border:#dde3ec;
+  --border-soft:#e8ecf2;
+  --ink:#1c2333;
+  --ink-soft:#5b6472;
+  --ink-faint:#8993a3;
+  --accent:#2f6fd6;
+  --accent-ink:#1d4fa8;
+  --accent-soft:#e8f0fd;
+  --accent-soft-border:#c9dcf7;
+  --warn:#c26a1a;
+  --warn-soft:#fbf0e0;
+  --warn-border:#f0d6ab;
+  --ok:#1f8a63;
+  --ok-soft:#e5f5ee;
+  --ok-border:#bfe4d2;
+  --missing:#c23d63;
+  --missing-soft:#fbe9ef;
+  --missing-border:#f0c1d3;
+  --bonus:#8148b8;
+  --bonus-soft:#f2eafb;
+  --bonus-border:#ddc4f0;
+  --tim:#1f7a9e;
+  --tim-soft:#e4f2f7;
+  --tim-border:#bfe0ec;
+  --code-bg:#1b2334;
+  --code-ink:#e7ecf5;
+  --code-border:#2c3650;
+  --shadow: 0 1px 2px rgba(28,35,51,0.04), 0 8px 24px -8px rgba(28,35,51,0.10);
+  --radius-s:8px;
+  --radius-m:12px;
+  --radius-l:18px;
+}
+
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#12151d;
+    --surface:#1a1f2b;
+    --surface-alt:#20263373;
+    --surface-alt:#212838;
+    --surface-sunken:#161b25;
+    --border:#323b4f;
+    --border-soft:#2a3143;
+    --ink:#e8ecf5;
+    --ink-soft:#a9b2c4;
+    --ink-faint:#7c8598;
+    --accent:#7aa8ff;
+    --accent-ink:#a9c5ff;
+    --accent-soft:#20304e;
+    --accent-soft-border:#33507e;
+    --warn:#e0a44e;
+    --warn-soft:#372a15;
+    --warn-border:#5a441f;
+    --ok:#5fcf9f;
+    --ok-soft:#123326;
+    --ok-border:#1f5c42;
+    --missing:#ef7fa2;
+    --missing-soft:#3a1c28;
+    --missing-border:#5c2c3d;
+    --bonus:#c199ec;
+    --bonus-soft:#2c2140;
+    --bonus-border:#453262;
+    --tim:#7cc4e0;
+    --tim-soft:#152c36;
+    --tim-border:#204a5a;
+    --code-bg:#0f1420;
+    --code-ink:#dfe6f2;
+    --code-border:#2a3348;
+    --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 8px 24px -8px rgba(0,0,0,0.5);
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#12151d;
+  --surface:#1a1f2b;
+  --surface-alt:#212838;
+  --surface-sunken:#161b25;
+  --border:#323b4f;
+  --border-soft:#2a3143;
+  --ink:#e8ecf5;
+  --ink-soft:#a9b2c4;
+  --ink-faint:#7c8598;
+  --accent:#7aa8ff;
+  --accent-ink:#a9c5ff;
+  --accent-soft:#20304e;
+  --accent-soft-border:#33507e;
+  --warn:#e0a44e;
+  --warn-soft:#372a15;
+  --warn-border:#5a441f;
+  --ok:#5fcf9f;
+  --ok-soft:#123326;
+  --ok-border:#1f5c42;
+  --missing:#ef7fa2;
+  --missing-soft:#3a1c28;
+  --missing-border:#5c2c3d;
+  --bonus:#c199ec;
+  --bonus-soft:#2c2140;
+  --bonus-border:#453262;
+  --tim:#7cc4e0;
+  --tim-soft:#152c36;
+  --tim-border:#204a5a;
+  --code-bg:#0f1420;
+  --code-ink:#dfe6f2;
+  --code-border:#2a3348;
+  --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 8px 24px -8px rgba(0,0,0,0.5);
+}
+
+*{box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--ink);
+  font-family:'Source Sans 3', Arial, sans-serif;
+  font-size:16px;
+  line-height:1.55;
+}
+h1,h2,h3,h4{
+  font-family:'Archivo', Arial, sans-serif;
+  font-weight:800;
+  color:var(--ink);
+  text-wrap:balance;
+  margin:0;
+}
+p{margin:0;}
+a{color:var(--accent-ink);}
+.wrap{max-width:1180px; margin:0 auto; padding:0 24px;}
+
+/* ============ HERO ============ */
+.hero{
+  background:
+    radial-gradient(1100px 420px at 82% -10%, var(--accent-soft) 0%, transparent 60%),
+    var(--surface);
+  border-bottom:1px solid var(--border);
+  padding:44px 0 34px;
+}
+.eyebrow{
+  display:inline-flex; align-items:center; gap:8px;
+  font-size:12.5px; font-weight:700; letter-spacing:.08em; text-transform:uppercase;
+  color:var(--accent-ink);
+  background:var(--accent-soft);
+  border:1px solid var(--accent-soft-border);
+  border-radius:999px;
+  padding:5px 12px 5px 10px;
+}
+.eyebrow .dot{width:6px;height:6px;border-radius:50%;background:var(--accent);}
+.hero h1{font-size:clamp(28px,4vw,40px); margin-top:14px; letter-spacing:-0.01em;}
+.hero .sub{font-size:16.5px; color:var(--ink-soft); max-width:62ch; margin-top:10px;}
+.meta-row{display:flex; flex-wrap:wrap; gap:10px; margin-top:22px;}
+.meta-chip{
+  display:flex; align-items:center; gap:8px;
+  background:var(--surface-alt); border:1px solid var(--border-soft);
+  border-radius:var(--radius-s); padding:9px 13px;
+  font-size:13.5px; color:var(--ink-soft);
+}
+.meta-chip b{color:var(--ink); font-weight:700;}
+.meta-chip svg{width:15px;height:15px;flex:0 0 auto; opacity:.75;}
+
+/* ============ QUICK NAV ============ */
+.quicknav{
+  position:sticky; top:0; z-index:40;
+  background:color-mix(in srgb, var(--surface) 92%, transparent);
+  backdrop-filter:blur(8px);
+  border-bottom:1px solid var(--border);
+}
+.quicknav .wrap{display:flex; gap:6px; overflow-x:auto; padding:10px 24px; scrollbar-width:thin;}
+.quicknav a{
+  flex:0 0 auto;
+  font-size:13.5px; font-weight:600; color:var(--ink-soft);
+  text-decoration:none; padding:8px 13px; border-radius:999px;
+  white-space:nowrap;
+  transition:background .15s, color .15s;
+}
+.quicknav a:hover{background:var(--surface-alt); color:var(--ink);}
+
+/* ============ SECTIONS ============ */
+section{padding:46px 0;}
+.section-head{max-width:70ch; margin-bottom:26px;}
+.section-head .kicker{
+  font-size:12.5px; font-weight:700; letter-spacing:.08em; text-transform:uppercase;
+  color:var(--accent-ink); margin-bottom:8px; display:block;
+}
+.section-head h2{font-size:26px;}
+.section-head p{color:var(--ink-soft); margin-top:8px; font-size:15.5px;}
+
+.callout{
+  background:var(--accent-soft); border:1px solid var(--accent-soft-border);
+  border-radius:var(--radius-m); padding:16px 20px;
+  font-size:14.5px; color:var(--ink);
+  display:flex; gap:12px; align-items:flex-start;
+}
+.callout svg{width:19px;height:19px;flex:0 0 auto; margin-top:1px; color:var(--accent-ink);}
+.callout strong{font-weight:700;}
+
+/* ============ AGENDA TIMELINE ============ */
+.timeline{border-left:2px solid var(--border); margin-left:6px; padding-left:26px;}
+.trow{position:relative; padding:0 0 22px; }
+.trow:last-child{padding-bottom:0;}
+.trow::before{
+  content:""; position:absolute; left:-32px; top:4px;
+  width:11px; height:11px; border-radius:50%;
+  background:var(--surface); border:3px solid var(--accent);
+}
+.trow.is-break::before{border-color:var(--ink-faint);}
+.trow-head{display:flex; flex-wrap:wrap; align-items:baseline; gap:10px; margin-bottom:4px;}
+.trow-time{
+  font-family:'IBM Plex Mono', monospace; font-size:12.5px; font-weight:500;
+  color:var(--accent-ink); background:var(--accent-soft); border:1px solid var(--accent-soft-border);
+  border-radius:6px; padding:2px 8px; white-space:nowrap;
+}
+.trow-title{font-weight:700; font-size:15.5px;}
+.trow-title a{color:var(--ink); text-decoration:none; border-bottom:1px dashed var(--ink-faint);}
+.trow-title a:hover{color:var(--accent-ink); border-color:var(--accent-ink);}
+.trow-meta{display:flex; flex-wrap:wrap; gap:14px; font-size:13px; color:var(--ink-soft); margin-top:3px;}
+.trow-meta span{display:inline-flex; align-items:center; gap:5px;}
+.trow.is-break .trow-title{color:var(--ink-faint); font-weight:600;}
+
+/* ============ FILTER CHIPS ============ */
+.filters{display:flex; flex-wrap:wrap; gap:8px; margin-bottom:22px;}
+.filter-chip{
+  font-family:inherit; font-size:13.5px; font-weight:600;
+  border:1px solid var(--border); background:var(--surface);
+  color:var(--ink-soft); border-radius:999px; padding:8px 15px;
+  cursor:pointer; transition:all .15s;
+}
+.filter-chip:hover{border-color:var(--accent-soft-border); color:var(--ink);}
+.filter-chip.active{background:var(--ink); color:var(--surface); border-color:var(--ink);}
+:root[data-theme="dark"] .filter-chip.active,
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .filter-chip.active{background:var(--accent); border-color:var(--accent); color:#0d1117;} }
+
+/* ============ CARD GRID ============ */
+.grid{display:grid; grid-template-columns:repeat(2,1fr); gap:16px;}
+@media (max-width:760px){.grid{grid-template-columns:1fr;}}
+
+.card{
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:var(--radius-m); box-shadow:var(--shadow);
+  overflow:hidden; transition:border-color .15s;
+}
+.card.is-open{grid-column:1/-1; border-color:var(--accent-soft-border);}
+
+.card-head{
+  width:100%; text-align:left; background:none; border:none; cursor:pointer;
+  padding:18px 20px; display:flex; gap:14px; align-items:flex-start;
+  font-family:inherit; color:inherit;
+}
+.card-head:focus-visible{outline:2px solid var(--accent); outline-offset:2px;}
+.uc-num{
+  font-family:'IBM Plex Mono',monospace; font-weight:600; font-size:12.5px;
+  color:var(--accent-ink); background:var(--accent-soft); border:1px solid var(--accent-soft-border);
+  border-radius:7px; padding:5px 8px; flex:0 0 auto; margin-top:1px;
+}
+.card-head-main{flex:1; min-width:0;}
+.card-title{font-size:16.5px; font-weight:700; margin-bottom:6px;}
+.card-tags{display:flex; flex-wrap:wrap; gap:6px;}
+.tag{
+  font-size:11.5px; font-weight:700; letter-spacing:.02em;
+  border-radius:6px; padding:3px 8px; border:1px solid transparent;
+  display:inline-flex; align-items:center; gap:4px;
+}
+.tag-tool{background:var(--surface-alt); color:var(--ink-soft); border-color:var(--border-soft);}
+.tag-tim{background:var(--tim-soft); color:var(--tim); border-color:var(--tim-border);}
+.tag-status-tested{background:var(--ok-soft); color:var(--ok); border-color:var(--ok-border);}
+.tag-status-new{background:var(--accent-soft); color:var(--accent-ink); border-color:var(--accent-soft-border);}
+.tag-status-draft{background:var(--warn-soft); color:var(--warn); border-color:var(--warn-border);}
+.tag-status-bonus{background:var(--bonus-soft); color:var(--bonus); border-color:var(--bonus-border);}
+.chevron{flex:0 0 auto; margin-top:4px; transition:transform .18s; color:var(--ink-faint);}
+.card.is-open .chevron{transform:rotate(180deg);}
+
+.card-body{padding:0 20px 22px; display:none;}
+.card.is-open .card-body{display:block;}
+
+.problem{font-size:14.5px; color:var(--ink); margin-bottom:14px;}
+.problem b{font-weight:700;}
+
+.note-box{
+  display:flex; gap:10px; align-items:flex-start;
+  background:var(--warn-soft); border:1px solid var(--warn-border);
+  border-radius:var(--radius-s); padding:11px 14px; font-size:13.5px; color:var(--ink);
+  margin-bottom:14px;
+}
+.note-box svg{width:16px;height:16px; flex:0 0 auto; margin-top:2px; color:var(--warn);}
+
+.tabs{display:flex; flex-wrap:wrap; gap:6px; margin-bottom:16px; border-bottom:1px solid var(--border-soft); padding-bottom:12px;}
+.tab-btn{
+  font-family:inherit; font-size:13px; font-weight:600;
+  background:var(--surface-alt); color:var(--ink-soft);
+  border:1px solid var(--border-soft); border-radius:999px;
+  padding:7px 13px; cursor:pointer;
+}
+.tab-btn.active{background:var(--ink); color:var(--surface); border-color:var(--ink);}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .tab-btn.active{background:var(--accent); border-color:var(--accent); color:#0d1117;} }
+:root[data-theme="dark"] .tab-btn.active{background:var(--accent); border-color:var(--accent); color:#0d1117;}
+
+.variant-meta{display:flex; flex-wrap:wrap; gap:16px; font-size:13px; color:var(--ink-soft); margin-bottom:14px;}
+.variant-meta span{display:inline-flex; gap:6px; align-items:center;}
+.variant-meta b{color:var(--ink); font-weight:600;}
+
+.prompt-block{border:1px solid var(--border); border-radius:var(--radius-m); overflow:hidden; margin-bottom:8px;}
+.prompt-head{
+  display:flex; align-items:center; justify-content:space-between; gap:10px;
+  padding:10px 14px; background:var(--surface-alt); border-bottom:1px solid var(--border);
+}
+.prompt-head-label{font-size:12.5px; font-weight:700; color:var(--ink-soft); text-transform:uppercase; letter-spacing:.04em;}
+.copy-btn{
+  font-family:'Source Sans 3',sans-serif; font-size:12.5px; font-weight:700;
+  background:var(--surface); color:var(--accent-ink); border:1px solid var(--accent-soft-border);
+  border-radius:7px; padding:6px 11px; cursor:pointer; display:inline-flex; align-items:center; gap:6px;
+  transition:background .15s;
+}
+.copy-btn:hover{background:var(--accent-soft);}
+.copy-btn svg{width:13px;height:13px;}
+.copy-btn.copied{background:var(--ok-soft); color:var(--ok); border-color:var(--ok-border);}
+.prompt-pre{
+  margin:0; padding:16px 18px; background:var(--code-bg); color:var(--code-ink);
+  font-family:'IBM Plex Mono',monospace; font-size:12.5px; line-height:1.65;
+  white-space:pre-wrap; word-break:break-word; max-height:420px; overflow-y:auto;
+}
+.hint-line{
+  display:flex; gap:8px; align-items:flex-start; font-size:12.5px; color:var(--ink-faint);
+  padding:10px 14px 0;
+}
+.hint-line svg{width:14px;height:14px;flex:0 0 auto; margin-top:1px;}
+.source-line{font-size:12.5px; color:var(--ink-faint); padding:2px 14px 12px; font-style:italic;}
+
+.draft-flag{
+  display:inline-flex; align-items:center; gap:5px; font-size:11.5px; font-weight:700;
+  color:var(--warn); background:var(--warn-soft); border:1px solid var(--warn-border);
+  border-radius:6px; padding:3px 8px; margin-left:8px;
+}
+
+.missing-box{
+  background:var(--missing-soft); border:1px dashed var(--missing-border);
+  border-radius:var(--radius-m); padding:16px 18px; font-size:13.5px; color:var(--ink);
+}
+.missing-box .missing-title{display:flex; align-items:center; gap:8px; font-weight:700; color:var(--missing); margin-bottom:5px;}
+.missing-box .missing-title svg{width:16px;height:16px;}
+
+.reuse-box{
+  background:var(--surface-alt); border:1px solid var(--border-soft);
+  border-radius:var(--radius-m); padding:16px 18px; font-size:13.5px; color:var(--ink);
+}
+.reuse-box a{font-weight:700; text-decoration:none; border-bottom:1px solid var(--accent-soft-border);}
+
+/* ============ THEORY INFO CARDS ============ */
+.theory-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:16px;}
+@media (max-width:900px){.theory-grid{grid-template-columns:1fr;}}
+.theory-card{background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-m); padding:20px; box-shadow:var(--shadow);}
+.theory-card .th-num{font-family:'IBM Plex Mono',monospace; font-size:12px; color:var(--ink-faint); margin-bottom:8px; display:block;}
+.theory-card h3{font-size:15.5px; margin-bottom:8px;}
+.theory-card p{font-size:13.5px; color:var(--ink-soft); margin-bottom:10px;}
+.chip-list{display:flex; flex-wrap:wrap; gap:6px;}
+.chip-list span{font-size:12px; background:var(--surface-alt); border:1px solid var(--border-soft); color:var(--ink-soft); border-radius:6px; padding:4px 8px;}
+.theory-teacher{font-size:12px; color:var(--ink-faint); margin-top:10px; display:flex; align-items:center; gap:6px;}
+.avatar{width:20px;height:20px;border-radius:50%; background:var(--accent-soft); color:var(--accent-ink); font-size:10px; font-weight:800; display:inline-flex; align-items:center; justify-content:center;}
+
+/* ============ TOP10 BANNER ============ */
+.top10{
+  background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-l);
+  padding:24px 26px; box-shadow:var(--shadow);
+  display:flex; flex-wrap:wrap; gap:24px; align-items:center; justify-content:space-between;
+}
+.top10-text{flex:1; min-width:240px;}
+.top10-text h3{font-size:16px; margin-bottom:6px;}
+.top10-text p{font-size:13.5px; color:var(--ink-soft);}
+.top10-chips{display:flex; flex-wrap:wrap; gap:8px; flex:1; min-width:280px;}
+.top10-chips span{
+  font-size:12.5px; font-weight:600; color:var(--ink);
+  background:var(--surface-alt); border:1px solid var(--border-soft);
+  border-radius:999px; padding:6px 12px;
+}
+
+/* ============ DIVIDER (BREAK) ============ */
+.divider{
+  display:flex; align-items:center; gap:14px; margin:0; padding:8px 0;
+}
+.divider .line{flex:1; height:1px; background:var(--border);}
+.divider .label{
+  font-size:12.5px; font-weight:700; letter-spacing:.06em; text-transform:uppercase;
+  color:var(--ink-faint); white-space:nowrap;
+}
+
+/* ============ AGENT SHARE NOTE ============ */
+.share-note{
+  margin-top:20px; display:flex; gap:12px; align-items:flex-start;
+  background:var(--bonus-soft); border:1px solid var(--bonus-border);
+  border-radius:var(--radius-m); padding:16px 20px; font-size:14px; color:var(--ink);
+}
+.share-note svg{width:18px;height:18px; flex:0 0 auto; color:var(--bonus); margin-top:1px;}
+
+/* ============ FOOTER ============ */
+footer{
+  border-top:1px solid var(--border); padding:30px 0 40px;
+  font-size:13px; color:var(--ink-faint);
+}
+footer .wrap{display:flex; flex-wrap:wrap; justify-content:space-between; gap:10px;}
+
+.legend-strip{display:flex; flex-wrap:wrap; gap:14px; font-size:12.5px; color:var(--ink-soft); margin-bottom:18px;}
+.legend-strip span{display:inline-flex; align-items:center; gap:6px;}
+.legend-dot{width:9px;height:9px;border-radius:50%; flex:0 0 auto;}
+
+@media (prefers-reduced-motion: reduce){
+  *{transition:none !important; scroll-behavior:auto !important;}
+}
+
+/* ============ FIRST-TIME GUIDE ============ */
+.start-guide{
+  background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-l);
+  padding:26px 28px; box-shadow:var(--shadow); margin-top:18px;
+}
+.start-guide-head{max-width:70ch; margin-bottom:20px;}
+.start-guide-head h3{font-size:17px; margin-bottom:6px;}
+.start-guide-head p{font-size:14px; color:var(--ink-soft);}
+.start-steps{display:grid; grid-template-columns:1fr 1fr; gap:20px;}
+@media (max-width:760px){.start-steps{grid-template-columns:1fr;}}
+.start-step{display:flex; flex-direction:column; gap:10px;}
+.start-step-label{display:flex; align-items:center; gap:9px;}
+.start-step-num{
+  width:24px; height:24px; border-radius:50%; background:var(--accent); color:#fff;
+  font-family:'IBM Plex Mono',monospace; font-size:12.5px; font-weight:700;
+  display:flex; align-items:center; justify-content:center; flex:0 0 auto;
+}
+:root[data-theme="dark"] .start-step-num{color:#0d1117;}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .start-step-num{color:#0d1117;} }
+.start-step-title{font-weight:700; font-size:14.5px;}
+.start-step img{
+  width:100%; height:auto; display:block; border-radius:var(--radius-s);
+  border:1px solid var(--border);
+}
+.start-step p{font-size:13.5px; color:var(--ink-soft); margin:0;}
+.start-step code{
+  font-family:'IBM Plex Mono',monospace; font-size:12.5px; background:var(--surface-alt);
+  border:1px solid var(--border-soft); border-radius:5px; padding:1px 6px; color:var(--ink);
+}
+
+/* ============ SCHEDULED PROMPT GUIDE ============ */
+.sched-guide{
+  margin-top:14px; border:1px solid var(--border); border-radius:var(--radius-m);
+  padding:16px 18px; background:var(--surface-alt);
+}
+.sched-guide-title{
+  font-size:12.5px; font-weight:700; text-transform:uppercase; letter-spacing:.04em;
+  color:var(--ink-soft); margin-bottom:12px;
+}
+.sched-step{display:flex; flex-direction:column; gap:8px; margin-bottom:16px;}
+.sched-step:last-child{margin-bottom:0;}
+.sched-step-label{display:flex; align-items:center; gap:9px;}
+.sched-step-num{
+  width:22px; height:22px; border-radius:50%; background:var(--accent); color:#fff;
+  font-family:'IBM Plex Mono',monospace; font-size:11.5px; font-weight:700;
+  display:flex; align-items:center; justify-content:center; flex:0 0 auto;
+}
+:root[data-theme="dark"] .sched-step-num{color:#0d1117;}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .sched-step-num{color:#0d1117;} }
+.sched-step-text{font-size:13.5px; font-weight:600;}
+.sched-step img{
+  width:100%; max-width:520px; height:auto; display:block; border-radius:var(--radius-s);
+  border:1px solid var(--border);
+}
+.sched-step p{font-size:13px; color:var(--ink-soft); margin:0;}
+
+/* ============ AJOUTS ATELIER ============ */
+:root{color-scheme:light;}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){color-scheme:dark;} }
+:root[data-theme="dark"]{color-scheme:dark;}
+.quicknav{top:env(safe-area-inset-top,0px);}
+.card, section{scroll-margin-top:70px;}
+.wrap{padding-inline:max(16px, 24px);}
+@media (max-width:480px){ .wrap{padding-inline:16px;} .quicknav .wrap{padding:10px 16px;} }
+
+/* Profile picker */
+.profiles{display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:14px;}
+.profile-tile{
+  font-family:inherit; text-align:left; cursor:pointer; color:inherit;
+  background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-m);
+  box-shadow:var(--shadow); padding:18px 18px 16px; display:flex; flex-direction:column; gap:10px;
+  transition:border-color .15s, transform .15s;
+}
+.profile-tile:hover{border-color:var(--accent-soft-border); transform:translateY(-1px);}
+.profile-tile:focus-visible{outline:2px solid var(--accent); outline-offset:2px;}
+.profile-tile.is-mine{border-color:var(--accent); background:linear-gradient(var(--accent-soft), var(--surface) 70%);}
+.pt-top{display:flex; align-items:center; justify-content:space-between; gap:8px;}
+.pt-initial{
+  width:34px; height:34px; border-radius:10px; display:flex; align-items:center; justify-content:center;
+  font-family:'Archivo',sans-serif; font-weight:800; font-size:15px;
+  background:var(--accent-soft); color:var(--accent-ink); border:1px solid var(--accent-soft-border);
+}
+.pt-mine{font-size:11px; font-weight:700; letter-spacing:.04em; text-transform:uppercase; color:var(--accent-ink); visibility:hidden;}
+.profile-tile.is-mine .pt-mine{visibility:visible;}
+.pt-who{font-family:'Archivo',sans-serif; font-weight:700; font-size:15.5px; line-height:1.3;}
+.pt-case{font-size:13.5px; color:var(--ink-soft);}
+.pt-go{font-size:13px; font-weight:700; color:var(--accent-ink); margin-top:auto;}
+
+/* Tool tags */
+.tag-cowork{background:var(--accent-soft); color:var(--accent-ink); border-color:var(--accent-soft-border);}
+.tag-excel{background:var(--ok-soft); color:var(--ok); border-color:var(--ok-border);}
+.tag-chrome{background:var(--tim-soft); color:var(--tim); border-color:var(--tim-border);}
+.tag-code{background:var(--bonus-soft); color:var(--bonus); border-color:var(--bonus-border);}
+.tag-auto{background:var(--warn-soft); color:var(--warn); border-color:var(--warn-border);}
+
+.block-title{font-size:12.5px; font-weight:700; text-transform:uppercase; letter-spacing:.05em; color:var(--ink-soft); margin:18px 0 8px;}
+.files{border:1px solid var(--border); border-radius:var(--radius-m); overflow:hidden; margin-bottom:6px;}
+.file-row{display:grid; grid-template-columns:minmax(150px,220px) 1fr; gap:4px 16px; padding:9px 14px; font-size:13.5px; border-top:1px solid var(--border-soft);}
+.file-row:first-child{border-top:none;}
+.file-row.is-file{background:var(--surface-alt); font-weight:700;}
+.file-row code{font-family:'IBM Plex Mono',monospace; font-size:12.5px; word-break:break-word;}
+.file-row span{color:var(--ink-soft);}
+@media (max-width:560px){ .file-row{grid-template-columns:1fr;} }
+
+.rules{margin:0; padding-left:18px; font-size:13.5px; display:grid; gap:4px;}
+.rules li::marker{color:var(--warn);}
+
+.check-box{
+  display:flex; gap:10px; align-items:flex-start; margin-top:12px;
+  background:var(--ok-soft); border:1px solid var(--ok-border);
+  border-radius:var(--radius-s); padding:11px 14px; font-size:13.5px;
+}
+.check-box svg{width:16px;height:16px;flex:0 0 auto;margin-top:2px;color:var(--ok);}
+
+.ex-title{font-family:'Archivo',sans-serif; font-weight:700; font-size:16px; margin-bottom:10px;}
+
+/* Matrix */
+.matrix-wrap{overflow-x:auto; background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-m); box-shadow:var(--shadow);}
+.matrix{border-collapse:collapse; width:100%; min-width:760px; font-size:13.5px;}
+.matrix th, .matrix td{padding:11px 12px; text-align:left; border-bottom:1px solid var(--border-soft); vertical-align:top;}
+.matrix thead th{background:var(--surface-alt); font-size:12px; text-transform:uppercase; letter-spacing:.04em; color:var(--ink-soft); font-weight:700;}
+.matrix thead th small{display:block; text-transform:none; letter-spacing:0; font-weight:600; color:var(--ink-faint); font-size:11.5px;}
+.matrix tbody tr:last-child td, .matrix tbody tr:last-child th{border-bottom:none;}
+.matrix tbody th{font-weight:700; min-width:190px;}
+.matrix tbody th .tag{margin-top:5px;}
+.ex-pill{
+  font-family:'IBM Plex Mono',monospace; font-size:12px; font-weight:500; cursor:pointer;
+  background:var(--surface-alt); color:var(--ink); border:1px solid var(--border);
+  border-radius:6px; padding:3px 7px; margin:0 4px 4px 0; display:inline-block;
+}
+.ex-pill:hover{border-color:var(--accent); color:var(--accent-ink);}
+.ex-pill:focus-visible{outline:2px solid var(--accent); outline-offset:1px;}
+.matrix .none{color:var(--ink-faint);}
+.matrix td.is-mine{background:var(--accent-soft);}
+
+.reflect{
+  width:100%; min-height:110px; resize:vertical; font-family:inherit; font-size:14.5px; color:var(--ink);
+  background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-m); padding:14px 16px;
+}
+.reflect:focus{outline:2px solid var(--accent); outline-offset:1px;}
+.reflect-note{font-size:12.5px; color:var(--ink-faint); margin-top:6px;}
+/* Téléchargements */
+.dl-btn{
+  font-family:'Source Sans 3',sans-serif; font-size:12.5px; font-weight:700; cursor:pointer;
+  background:var(--surface); color:var(--accent-ink); border:1px solid var(--accent-soft-border);
+  border-radius:7px; padding:6px 11px; display:inline-flex; align-items:center; gap:6px; white-space:nowrap;
+}
+.dl-btn:hover{background:var(--accent-soft);}
+.dl-btn:focus-visible{outline:2px solid var(--accent); outline-offset:2px;}
+.dl-btn svg{width:13px;height:13px;}
+.dl-btn.done{background:var(--ok-soft); color:var(--ok); border-color:var(--ok-border);}
+.dl-btn.solid{background:var(--accent); color:#fff; border-color:var(--accent);}
+:root[data-theme="dark"] .dl-btn.solid{color:#0d1117;}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .dl-btn.solid{color:#0d1117;} }
+.dl-btn[hidden]{display:none;}
+.file-row.is-file{align-items:center;}
+.file-row .dl-cell{display:flex; align-items:center; gap:10px; flex-wrap:wrap;}
+.dl-list{display:grid; gap:14px; grid-template-columns:repeat(auto-fit,minmax(260px,1fr));}
+.dl-card{background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-m); box-shadow:var(--shadow); padding:16px 18px; display:flex; flex-direction:column; gap:10px;}
+.dl-card h3{font-size:15px;}
+.dl-card .who{font-size:13px; color:var(--ink-soft);}
+.dl-files{display:grid; gap:8px;}
+.dl-file{display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap; font-size:13px;}
+.dl-file code{font-family:'IBM Plex Mono',monospace; font-size:12px; word-break:break-word;}
+.dl-msg{font-size:13px; color:var(--missing); margin-top:10px; min-height:1em;}
+.dl-msg:empty{display:none;}
+
+</style>
+
+</head>
+<body>
+<!-- ================= HERO ================= -->
+<header class="hero">
+  <div class="wrap">
+    <span class="eyebrow"><span class="dot"></span>Formation Claude · Analyse de données</span>
+    <h1>Atelier pratique : chacun son cas, ses données</h1>
+    <p class="sub">Cinq cas métier, un par profil. Cliquez sur votre profil, ouvrez votre cas et travaillez exercice par exercice avec Claude pendant la séance en ligne.</p>
+    <div class="meta-row">
+      <span class="meta-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18M9 4v16"/></svg><b>5 cas</b>&nbsp;· 35 exercices</span>
+      <span class="meta-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.8-3.8a6 6 0 0 1-7.9 7.9l-6.9 6.9a2.1 2.1 0 0 1-3-3l6.9-6.9a6 6 0 0 1 7.9-7.9l-3.8 3.8Z"/></svg><b>Outils</b>&nbsp;Cowork · Claude in Excel · Claude in Chrome · Claude Code</span>
+      <span class="meta-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m22 8-6 4 6 4V8Z"/><rect x="2" y="6" width="14" height="12" rx="2"/></svg><b>100 % en ligne</b>&nbsp;· Zoom / plateforme Ikenas</span>
+      <span class="meta-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"/></svg><b>Données fictives</b>&nbsp;créées pour la formation</span>
+    </div>
+  </div>
+</header>
+
+<!-- ================= QUICK NAV ================= -->
+<nav class="quicknav" aria-label="Sections">
+  <div class="wrap">
+    <a href="#mode-emploi">Mode d'emploi</a>
+    <a href="#profils">Choisir mon cas</a>
+    <a href="#parcours">Parcours de l'atelier</a>
+    <a href="#fichiers">Fichiers</a>
+    <a href="#cas">Les 5 cas</a>
+    <a href="#reflexes">Bons réflexes</a>
+    <a href="#reflexion">Espace de réflexion</a>
+  </div>
+</nav>
+
+<main>
+
+<div class="wrap">
+<section id="mode-emploi" style="padding-bottom:0;">
+  <div class="callout">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+    <div>
+      <strong>Comment utiliser cette page :</strong> choisissez votre profil ci-dessous, votre cas s'ouvre automatiquement. Dans la carte, les petits boutons 1.1, 1.3, 2.4… correspondent aux exercices : chacun indique l'outil, la durée, le livrable attendu et un prompt prêt à copier. Les prompts sont <b>une aide, pas une obligation</b> : adaptez-les à votre façon de travailler.
+    </div>
+  </div>
+</section>
+</div>
+
+<div class="wrap">
+<div class="start-guide">
+  <div class="start-guide-head">
+    <h3>Avant de commencer l'exercice 1.1</h3>
+    <p>Quatre gestes à faire une seule fois, au début de l'atelier.</p>
+  </div>
+  <div class="start-steps">
+    <div class="start-step">
+      <div class="start-step-label"><span class="start-step-num">1</span><span class="start-step-title">Récupérez les fichiers de votre cas</span></div>
+      <p>Téléchargez les classeurs Excel (et les PDF pour les cas 2 et 5) avec les boutons de la section <a href="#fichiers">Fichiers à télécharger</a>. Enregistrez-les dans un dossier dédié, par exemple <code>Atelier_Claude</code>. Chaque classeur contient un onglet <b>Consignes</b>.</p>
+    </div>
+    <div class="start-step">
+      <div class="start-step-label"><span class="start-step-num">2</span><span class="start-step-title">Ouvrez Cowork et donnez accès au dossier</span></div>
+      <p>Dans l'application Claude sur votre ordinateur, ouvrez l'onglet <b>Cowork</b> et sélectionnez le dossier <code>Atelier_Claude</code>. Claude pourra lire vos fichiers et y déposer ses livrables.</p>
+    </div>
+    <div class="start-step">
+      <div class="start-step-label"><span class="start-step-num">3</span><span class="start-step-title">Copiez le prompt, relisez le plan</span></div>
+      <p>Cliquez sur <b>Copier</b>, collez le prompt dans Cowork, puis lisez le plan que Claude propose avant de le laisser travailler. Corrigez-le si une étape ne vous convient pas.</p>
+    </div>
+    <div class="start-step">
+      <div class="start-step-label"><span class="start-step-num">4</span><span class="start-step-title">Vérifiez chaque chiffre</span></div>
+      <p>Demandez systématiquement : <code>Comment as-tu vérifié ce résultat ?</code> Un total recalculé autrement, un contrôle des doublons et des vides : c'est la règle de l'atelier.</p>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ================= PROFILS ================= -->
+<section id="profils">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="kicker">Étape 1</span>
+      <h2>Qui êtes-vous ? Choisissez votre cas</h2>
+      <p>Chaque cas reprend le quotidien d'un profil de participant. Un clic ouvre votre cas plus bas ; votre choix reste mémorisé sur cet appareil.</p>
+    </div>
+    <div class="profiles" id="profiles"></div>
+  </div>
+</section>
+
+<!-- ================= PARCOURS ================= -->
+<section id="parcours" style="padding-top:10px;">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="kicker">Étape 2</span>
+      <h2>Parcours de l'atelier</h2>
+      <p>Tout le groupe avance bloc par bloc, chacun sur son cas. Le tableau indique quel exercice faire dans chaque bloc ; cliquez sur un numéro pour l'ouvrir directement.</p>
+    </div>
+    <div class="matrix-wrap"><table class="matrix" id="matrix"></table></div>
+  </div>
+</section>
+
+<div class="wrap"><div class="divider"><div class="line"></div><span class="label">Vos cas pratiques</span><div class="line"></div></div></div>
+
+<!-- ================= CAS ================= -->
+<!-- ================= FICHIERS ================= -->
+<section id="fichiers" style="padding-top:10px;">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="kicker">Avant la séance</span>
+      <h2>Fichiers à télécharger</h2>
+      <p>Chaque fichier se télécharge en un clic. Le bouton « Tout en .zip » regroupe tous les fichiers d'un cas dans une seule archive.</p>
+    </div>
+    <div class="dl-list" id="dl-list"></div>
+    <p class="dl-msg" id="dl-msg" role="status"></p>
+  </div>
+</section>
+
+<section id="cas">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="kicker">Étape 3</span>
+      <h2>Les 5 cas pratiques</h2>
+      <p>Cliquez sur le titre d'un cas pour l'ouvrir. Vous pouvez aussi explorer les cas des autres participants si vous terminez en avance.</p>
+    </div>
+    <div class="legend-strip" id="legend"></div>
+    <div class="grid" id="grid-cas"></div>
+  </div>
+</section>
+
+<!-- ================= REFLEXES ================= -->
+<section id="reflexes">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="kicker">À garder en tête</span>
+      <h2>Trois bons réflexes pour chaque exercice</h2>
+      <p>Ils valent pour les cinq cas et pour votre travail réel après la formation.</p>
+    </div>
+    <div class="theory-grid" id="theory-grid"></div>
+  </div>
+</section>
+
+<!-- ================= REFLEXION ================= -->
+<section id="reflexion" style="padding-top:10px;">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="kicker">Fin de l'atelier</span>
+      <h2>Espace de réflexion</h2>
+      <p>Ce que j'ai appris, et ce que j'appliquerai dans mon service. Nous en ferons un tour de table à la fin de la séance.</p>
+    </div>
+    <label for="reflect-text" class="block-title" style="display:block; margin-top:0;">Mes notes</label>
+    <textarea id="reflect-text" class="reflect" placeholder="Ex. : je vais utiliser le contrôle des doublons chaque mois sur notre fichier de suivi…"></textarea>
+    <p class="reflect-note">Vos notes restent uniquement dans ce navigateur, personne d'autre ne les voit.</p>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>Formation Claude — Analyse de données · IKENAS</span>
+    <span>Données entièrement fictives · toute ressemblance est fortuite</span>
+  </div>
+</footer>
+
+<script>
+const ICONS = {
+  info: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>',
+  warn: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0Z"/><path d="M12 9v4M12 17h.01"/></svg>',
+  copy: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>',
+  check: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>',
+  chevron: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M6 9l6 6 6-6"/></svg>'
+};
+
+const TOOLS = {
+  cowork: { label:'Cowork', cls:'tag-cowork' },
+  excel:  { label:'Claude in Excel', cls:'tag-excel' },
+  chrome: { label:'Claude in Chrome', cls:'tag-chrome' },
+  code:   { label:'Claude Code (guidé)', cls:'tag-code' },
+  auto:   { label:'Automatisation', cls:'tag-auto' }
+};
+
+const REMINDER = "\n\nUtilise du code pour chaque chiffre, puis valide ton résultat (doublons, valeurs vides, total recalculé par une autre méthode). Présente-moi d'abord ton plan.";
+
+/* ======================================================================
+   CAS 1 — Enseignants universitaires
+   ====================================================================== */
+const CAS1 = {
+  id:'cas1', num:'CAS 1', title:'Analyse de données pédagogiques',
+  profile:'Enseignants universitaires', initial:'EU',
+  context:'Vous êtes enseignant-chercheur et membre du conseil pédagogique d’une faculté. Vous devez présenter le bilan du semestre S3 (1 200 étudiants, 4 filières) et exploiter un questionnaire de satisfaction pour un article de recherche. Les fichiers ont été saisis par plusieurs personnes et contiennent des erreurs.',
+  files:[
+    { name:'Cas1_Donnees_pedagogiques.xlsx', sheets:[
+      ['Notes_S3','Notes des 6 modules sur 20 et heures d’absence par étudiant'],
+      ['Referentiel_modules','Correspondance M1…M6 → intitulé du module par filière'],
+      ['Questionnaire','400 réponses à 10 items (Likert 1 à 5) + commentaire libre'],
+      ['Items_questionnaire','Énoncé des 10 items, dont 2 inversés']
+    ]}
+  ],
+  rules:[
+    'Note sur 20. Un module est validé si la note est ≥ 10.',
+    'Semestre validé si la moyenne des 6 modules (coefficients égaux) est ≥ 10 et qu’aucune note n’est < 5 (note éliminatoire). Règle simplifiée pour l’exercice.',
+    '« ABS » = absence à l’examen : à décider en groupe (0/20 ou exclusion du calcul), et à documenter.',
+    'Les réponses 0, 6 ou 9 au questionnaire sont des erreurs de saisie.'
+  ],
+  exercises:[
+    { n:'1.1', name:'Exploration', tool:'cowork', dur:'30 min', out:'profil_donnees.xlsx',
+      prompt:`Je travaille sur le classeur Cas1_Donnees_pedagogiques.xlsx. Lis d'abord l'onglet Consignes.
+
+Profile les onglets Notes_S3 et Questionnaire :
+1. Nombre de lignes, de colonnes et d'étudiants uniques (Matricule).
+2. Lignes dupliquées exactes et matricules présents plusieurs fois.
+3. Valeurs vides, colonne par colonne.
+4. Valeurs hors échelle : notes hors 0–20 ou non numériques (ex. « ABS »), réponses au questionnaire hors 1–5.
+5. Libellés de filière incohérents (orthographe, majuscules, espaces), comparés à l'onglet Referentiel_modules.
+
+Crée profil_donnees.xlsx avec un onglet par contrôle (Synthese, Doublons, Vides, Hors_echelle, Filieres). Pour chaque anomalie, garde le numéro de ligne d'origine.
+Ne corrige rien pour l'instant. Termine par un résumé de 5 lignes.` + REMINDER,
+      check:'Comparez le nombre de lignes du fichier au nombre d’étudiants uniques : l’écart doit correspondre aux doublons trouvés.' },
+    { n:'1.2', name:'Préparation', tool:'cowork', dur:'45 min', out:'notes_propres.xlsx + onglet Journal',
+      prompt:`À partir de profil_donnees.xlsx :
+
+Étape 1 — Sans rien modifier, liste les corrections que tu proposes dans un tableau : anomalie, nombre de lignes, correction proposée, risque de la correction.
+
+Avant d'appliquer, pose-moi les questions d'arbitrage, notamment :
+- une note « ABS » : 0/20 ou exclusion du calcul ?
+- une note de 125 : erreur de virgule (12,5) ou valeur à exclure ?
+- une filière vide ou mal orthographiée : comment la retrouver ?
+
+Étape 2 — Une fois mes règles validées, applique-les et crée notes_propres.xlsx avec :
+- les onglets nettoyés (mêmes colonnes que l'original) ;
+- un onglet Journal : ligne, colonne, valeur avant, valeur après, règle appliquée.
+
+Contrôle final : nombre de lignes avant / après et nombre d'étudiants uniques.` + REMINDER,
+      check:'Chaque ligne modifiée apparaît dans le Journal avec sa règle. Notez la règle choisie pour « ABS » : elle change les taux de validation.' },
+    { n:'1.3', name:'Analyse', tool:'cowork', dur:'60 min', out:'bilan_S3.xlsx + note_conseil.docx',
+      prompt:`À partir de notes_propres.xlsx :
+1. Calcule la moyenne des 6 modules (coefficients égaux) de chaque étudiant.
+2. Attribue le statut : « Validé » si moyenne ≥ 10 et aucune note < 5 ; sinon « Non validé », avec le motif (moyenne insuffisante ou note éliminatoire).
+3. Calcule le taux de validation par filière, puis le taux de validation de chaque module par filière (module validé si note ≥ 10), avec l'intitulé du module tiré de Referentiel_modules.
+4. Identifie les 5 modules les plus à risque (taux de validation le plus faible).
+
+Crée bilan_S3.xlsx (onglets Etudiants, Filieres, Modules, Top5_risque) avec un graphique par filière.
+
+Rédige ensuite note_conseil.docx : une page pour le conseil pédagogique, ton neutre. Contenu : chiffres clés, les 5 modules à risque, 3 pistes d'action. Rappelle la règle retenue pour les « ABS ».` + REMINDER,
+      check:'Demandez le taux de validation global calculé de deux façons (par étudiant, puis en pondérant les taux par filière) : les deux doivent coïncider.' },
+    { n:'1.4', name:'Absences et réussite', tool:'cowork', dur:'30 min', out:'Onglet Absences + graphique',
+      prompt:`Dans bilan_S3.xlsx, ajoute un onglet Absences :
+1. Corrélation de Pearson entre Absences_heures et la moyenne, avec une interprétation en une phrase simple.
+2. Nuage de points absences × moyenne.
+3. Moyenne et taux de validation par tranche d'absences : 0–5 h, 6–10 h, 11–20 h, plus de 20 h, avec l'effectif de chaque tranche.
+
+Rappelle qu'une corrélation n'est pas une causalité et signale les tranches à faible effectif.` + REMINDER,
+      check:'Le signe de la corrélation doit être cohérent avec le tableau par tranche (la moyenne baisse-t-elle quand les absences augmentent ?).' },
+    { n:'1.5', name:'Étude du questionnaire', tool:'code', dur:'45 min', out:'rapport_questionnaire.html',
+      prompt:`Je débute avec Claude Code : explique-moi chaque étape en langage simple avant de l'exécuter.
+
+Fichier : Cas1_Donnees_pedagogiques.xlsx, onglets Questionnaire et Items_questionnaire.
+1. Écarte les réponses 0, 6 ou 9 (erreurs de saisie) et indique combien de valeurs sont concernées.
+2. Recode les items inversés Q4 et Q8 (nouvelle valeur = 6 − valeur).
+3. Calcule l'alpha de Cronbach sur les 10 items et la moyenne de chaque item.
+4. Compare la satisfaction globale (Q10) entre filières, puis entre sexes, avec un test adapté à une échelle de Likert. Justifie ton choix de test.
+5. Génère rapport_questionnaire.html : tableaux, un graphique, et pour chaque résultat une explication simple (ce que l'on peut écrire dans un article, et ses limites).
+
+Enregistre le code dans un fichier analyse_questionnaire.py que je pourrai relancer.`,
+      check:'Vérifiez que Q4 et Q8 ont bien été recodés avant le calcul de l’alpha : sans recodage, l’alpha baisse nettement.' },
+    { n:'1.6', name:'Lecture qualitative', tool:'cowork', dur:'30 min', out:'Onglet Themes',
+      prompt:`Lis la colonne Commentaire de l'onglet Questionnaire.
+1. Propose au maximum 6 thèmes, chacun avec une définition d'une ligne. Attends ma validation.
+2. Classe chaque commentaire dans un seul thème (ou « Autre »). Compte les commentaires par thème et par filière.
+3. Donne 2 citations exactes par thème.
+4. Tire au hasard 10 commentaires classés et affiche-les avec leur thème, pour que je vérifie le classement à la main.
+
+Ajoute le résultat dans un onglet Themes du classeur bilan_S3.xlsx.`,
+      check:'Sur les 10 commentaires tirés au hasard, combien de classements corrigeriez-vous ? Notez-le : c’est la fiabilité de l’analyse.' },
+    { n:'2.3', name:'Tableau de bord', tool:'excel', dur:'30 min', out:'Onglet Tableau_de_bord',
+      prompt:`(Dans Excel, avec le panneau Claude, classeur notes_propres.xlsx ouvert)
+
+Crée un onglet Tableau_de_bord construit uniquement avec des formules qui renvoient aux onglets de données, sans valeurs collées :
+- en lignes les filières, en colonnes les modules M1 à M6 : taux de validation (note ≥ 10) ;
+- une colonne « Taux de validation du semestre » ;
+- une mise en forme conditionnelle en rouge sous 50 % ;
+- un graphique en barres par filière.
+
+Explique chaque formule en citant les cellules. Vérifie qu'un changement de note dans les données met bien le tableau à jour.`,
+      check:'Modifiez une note à la main et regardez si le taux et le graphique changent.' }
+  ]
+};
+
+/* ======================================================================
+   CAS 2 — Expert-comptable
+   ====================================================================== */
+const CAS2 = {
+  id:'cas2', num:'CAS 2', title:'Analyse d’un dossier comptable',
+  profile:'Expert-comptable', initial:'EC',
+  context:'Vous révisez les comptes 2025 d’un client fictif, SARL Atlas Distribution (négoce alimentaire, Agadir). Le client a transmis son grand livre, la balance N-1, le relevé bancaire du 4e trimestre et 12 factures fournisseurs de décembre en PDF.',
+  files:[
+    { name:'Cas2_Dossier_comptable.xlsx', sheets:[
+      ['Grand_livre_2025','Toutes les écritures 2025 : date, journal, pièce, compte (CGNC), tiers, libellé, débit, crédit'],
+      ['Balance_N-1','Soldes 2024 par compte (solde débiteur positif)'],
+      ['Releve_bancaire_Q4','Relevé du compte bancaire du 01/10 au 31/12/2025'],
+      ['Plan_comptable','Comptes utilisés par le client'],
+      ['Parametres','Taux de TVA retenu pour l’exercice']
+    ]},
+    { name:'Cas2_Pieces_justificatives.pdf', sheets:[['12 factures','Factures fournisseurs de décembre 2025 à extraire']] }
+  ],
+  rules:[
+    'Plan comptable général marocain (CGNC) ; montants en MAD.',
+    'TVA à 20 % sur toutes les opérations de l’exercice (simplification).',
+    'Solde d’un compte = débit − crédit.',
+    'Secret professionnel : dans la réalité, ne traiter des données client qu’avec son accord et dans un environnement validé (plan Team ou Enterprise).'
+  ],
+  exercises:[
+    { n:'1.1', name:'Exploration', tool:'cowork', dur:'30 min', out:'controles_GL.xlsx',
+      prompt:`Je travaille sur Cas2_Dossier_comptable.xlsx (plan comptable marocain, montants en MAD). Lis d'abord l'onglet Consignes.
+
+Contrôle l'onglet Grand_livre_2025 :
+1. Équilibre de chaque pièce (N_piece) : total débit = total crédit. Liste les pièces déséquilibrées avec l'écart.
+2. Pièces en double : lignes identiques, ou même journal, date, tiers, comptes et montants sous un autre numéro.
+3. Lignes sans libellé.
+4. Dates non conformes : saisies en texte, format incorrect, hors 2025.
+5. Comptes absents de l'onglet Plan_comptable.
+
+Crée controles_GL.xlsx avec un onglet par anomalie et un onglet Synthese (nombre de cas, montant concerné). Donne aussi le total débit et le total crédit du fichier.` + REMINDER,
+      check:'Une pièce déséquilibrée doit apparaître avec son compte et son écart exact en MAD.' },
+    { n:'1.3', name:'Balance et revue analytique', tool:'cowork', dur:'45 min', out:'dossier_revision.xlsx',
+      prompt:`À partir du grand livre nettoyé (pièces dupliquées retirées, dates corrigées ; liste ce que tu as retiré) :
+1. Construis la balance 2025 par compte : total débit, total crédit, solde (débit − crédit).
+2. Compare-la à l'onglet Balance_N-1 : variation en MAD et en %.
+3. Liste les comptes dont la variation dépasse 20 % en valeur absolue. Pour chacun, propose une question précise à poser au client.
+
+Crée dossier_revision.xlsx (onglets Balance_2025, Comparaison_N-1, Questions_client). Vérifie que la balance 2025 est équilibrée.` + REMINDER,
+      check:'La balance doit être équilibrée (total des soldes = 0). Les questions au client doivent citer le compte et le montant.' },
+    { n:'1.4', name:'Rapprochement bancaire', tool:'cowork', dur:'45 min', out:'État de rapprochement',
+      prompt:`Rapproche le compte 5141 (journal BQ, du 01/10 au 31/12/2025) avec l'onglet Releve_bancaire_Q4.
+1. Explique d'abord ta méthode de pointage (montant, date, libellé, tolérance sur les dates) et attends ma validation.
+2. Liste les opérations pointées, puis les opérations non pointées côté comptabilité et côté banque.
+3. Signale les écarts de montant sur des opérations qui se ressemblent.
+4. Établis l'état de rapprochement au 31/12/2025, du solde comptable au solde bancaire.
+5. Propose les écritures de régularisation (compte, débit, crédit, libellé) sans les passer dans le grand livre.` + REMINDER,
+      check:'L’état de rapprochement doit « tomber juste » : solde comptable + éléments en suspens = solde bancaire.' },
+    { n:'1.5', name:'Factures PDF', tool:'cowork', dur:'40 min', out:'factures_dec.xlsx + écarts',
+      prompt:`Fichier : Cas2_Pieces_justificatives.pdf (12 factures fournisseurs de décembre).
+1. Extrais pour chaque facture : fournisseur, numéro, date, montant HT, TVA, TTC.
+2. Vérifie les calculs : TVA = HT × 20 % et TTC = HT + TVA. Signale tout écart.
+3. Rapproche chaque facture des écritures du journal AC de décembre dans Grand_livre_2025 (tiers, date, montant).
+4. Liste : les factures absentes du grand livre, les factures comptabilisées pour un montant différent, les écritures AC de décembre sans facture.
+
+Crée factures_dec.xlsx (onglets Factures, Rapprochement, Ecarts). Indique les valeurs dont la lecture était incertaine.` + REMINDER,
+      check:'Ouvrez deux factures au hasard dans le PDF et comparez-les à l’extraction ligne par ligne.' },
+    { n:'2.2', name:'Vérification des formules', tool:'excel', dur:'20 min', out:'Classeur sans erreur',
+      prompt:`(Dans Excel, avec le panneau Claude, classeur dossier_revision.xlsx ouvert)
+
+Parcours toutes les feuilles et repère les formules en erreur (#REF!, #VALEUR!, #DIV/0!, #N/A) ou incohérentes avec les formules voisines.
+Pour chacune : cite la cellule, explique la cause en une phrase et propose la correction. Applique-la seulement après mon accord.
+Termine par la liste des cellules modifiées.`,
+      check:'Demandez la liste finale des cellules modifiées et contrôlez-en deux vous-même.' },
+    { n:'2.4', name:'Simulation', tool:'excel', dur:'30 min', out:'Onglet Scenarios',
+      prompt:`(Dans Excel, avec le panneau Claude, classeur de révision ouvert)
+
+Crée un onglet Scenarios construit avec des formules :
+- Scénario A : reclassement de 50 000 MAD du compte 6125 (achats non stockés) vers 2351 (immobilisation) ;
+- Scénario B : comptabilisation des régularisations issues du rapprochement bancaire ;
+- Scénario A + B.
+
+Pour chaque scénario, montre le résultat avant / après et l'impact. Mets le montant du reclassement dans une cellule d'hypothèse modifiable. N'intègre pas d'amortissement et signale-le comme limite.`,
+      check:'Changez le montant du reclassement : l’impact sur le résultat doit varier du même montant.' },
+    { n:'3.4', name:'Script de contrôle', tool:'code', dur:'30 min', out:'controles.py + rapport',
+      prompt:`Je débute avec Claude Code : explique-moi chaque étape simplement avant de l'exécuter.
+
+Écris un script controles.py qui :
+1. prend en entrée le chemin d'un fichier Excel de grand livre au même format que l'onglet Grand_livre_2025 ;
+2. relance les contrôles de l'exercice 1.1 (équilibre des pièces, doublons, libellés vides, dates, comptes hors plan) ;
+3. s'arrête avec un message clair en français si une pièce est déséquilibrée (numéro de pièce et écart) ;
+4. sinon produit un rapport Excel des anomalies.
+
+Teste-le sur Cas2_Dossier_comptable.xlsx, puis sur une copie où la pièce déséquilibrée est corrigée, et montre-moi les deux résultats.`,
+      check:'Le script doit s’arrêter sur le fichier d’origine et produire un rapport sur la copie corrigée.' }
+  ]
+};
+
+/* ======================================================================
+   CAS 3 — Directeur 
+   ====================================================================== */
+const CAS3 = {
+  id:'cas3', num:'CAS 3', title:'Pilotage d’un réseau d’agences',
+  profile:'Directeur', initial:'DA',
+  context:'Vous dirigez le pilotage d’un réseau fictif de 12 agences. La direction générale demande un tableau de bord 2025 : activité et placements par agence et par programme, écart aux objectifs, et performance du traitement des offres d’emploi. Les fichiers remontés par les agences ne sont pas homogènes.',
+  files:[
+    { name:'Cas3_Pilotage_activite.xlsx', sheets:[
+      ['Indicateurs_agences','Activité mensuelle 2025 par agence et programme : inscrits, entretiens, bénéficiaires, placements, dont femmes'],
+      ['Objectifs_2025','Objectif annuel de placements par agence et programme'],
+      ['Offres_emploi','800 offres reçues des entreprises : secteur, poste, statut, délai de satisfaction']
+    ]}
+  ],
+  rules:[
+    'Taux de transformation = placements / entretiens.',
+    'Taux de réalisation = placements de l’année / objectif annuel.',
+    'Les noms des programmes servent d’illustration ; tous les chiffres sont fictifs.',
+    'Confidentialité : travailler sur des agrégats, jamais sur des fiches nominatives de chercheurs d’emploi.'
+  ],
+  exercises:[
+    { n:'1.1', name:'Exploration', tool:'cowork', dur:'30 min', out:'indicateurs_propres.xlsx',
+      prompt:`Je travaille sur Cas3_Pilotage_activite.xlsx. Lis d'abord l'onglet Consignes.
+
+Sur l'onglet Indicateurs_agences :
+1. Harmonise les noms d'agence (majuscules, espaces, accents) et montre la table de correspondance avant / après.
+2. Repère les doublons (même année, mois, agence et programme), les valeurs vides, les valeurs négatives et les incohérences (placements > entretiens, par exemple).
+3. Propose une correction pour chaque cas et attends ma validation avant de l'appliquer.
+
+Crée indicateurs_propres.xlsx avec les données nettoyées et un onglet Journal (ligne, colonne, valeur avant, valeur après, règle).` + REMINDER,
+      check:'Après harmonisation, il doit rester exactement 12 agences distinctes.' },
+    { n:'1.3', name:'Tableau de bord direction', tool:'cowork', dur:'60 min', out:'TDB_direction_2025.xlsx',
+      prompt:`À partir de indicateurs_propres.xlsx et de l'onglet Objectifs_2025 :
+1. Par agence et par programme : placements 2025, taux de transformation (placements / entretiens), taux de réalisation (placements / objectif annuel), part des femmes dans les placements.
+2. Classement des 12 agences par taux de réalisation.
+3. Graphique de l'évolution mensuelle des placements du réseau.
+4. Onglet Synthese : 5 constats chiffrés, rédigés pour la direction générale.
+
+Crée TDB_direction_2025.xlsx. Signale les agences ou programmes sans objectif.` + REMINDER,
+      check:'Le total des placements doit être identique qu’on le calcule par agence ou par mois.' },
+    { n:'1.4', name:'Offres d’emploi', tool:'cowork', dur:'40 min', out:'Onglet Offres',
+      prompt:`Sur l'onglet Offres_emploi :
+1. Taux d'offres pourvues par secteur et par agence (en nombre d'offres et en nombre de postes).
+2. Délai moyen et délai médian de satisfaction par secteur, calculés uniquement sur les offres pourvues.
+3. Secteurs en tension : faible taux de pourvoi et délai long. Propose ton seuil et justifie-le.
+4. Croise ces résultats avec les placements par agence de TDB_direction_2025.xlsx.
+
+Ajoute un onglet Offres au tableau de bord, avec tableaux, un graphique et 3 constats.` + REMINDER,
+      check:'Moyenne et médiane très différentes ? Demandez à Claude d’expliquer quelles offres tirent la moyenne.' },
+    { n:'1.6', name:'Note et présentation', tool:'cowork', dur:'30 min', out:'note_DG.docx + presentation.pptx',
+      prompt:`À partir de TDB_direction_2025.xlsx :
+1. Rédige note_DG.docx en 10 lignes maximum : résultats du réseau, 3 agences à accompagner (avec le chiffre qui le justifie), 3 recommandations opérationnelles.
+2. Prépare presentation.pptx de 5 diapositives : chiffres clés, classement des agences, évolution mensuelle, offres et secteurs en tension, recommandations.
+
+Utilise uniquement les chiffres du tableau de bord et indique l'onglet source de chaque chiffre.`,
+      check:'Chaque chiffre de la note doit se retrouver dans le tableau de bord.' },
+    { n:'2.4', name:'Scénario 2026', tool:'excel', dur:'30 min', out:'Onglet Scenario_2026',
+      prompt:`(Dans Excel, avec le panneau Claude, classeur TDB_direction_2025.xlsx ouvert)
+
+Crée un onglet Scenario_2026 avec des formules et des cellules d'hypothèse modifiables :
+- objectif 2026 = objectif 2025 + 10 % ;
+- les 3 agences au taux de transformation le plus faible rejoignent la moyenne du réseau, à nombre d'entretiens constant.
+
+Calcule les placements supplémentaires par agence et au total, et le nouveau taux de réalisation. Explique tes formules en citant les cellules.`,
+      check:'Mettez la hausse d’objectif à 0 % : le scénario doit retrouver les chiffres 2025.' },
+    { n:'2.5', name:'Contexte régional', tool:'chrome', dur:'30 min', out:'Onglet Contexte',
+      prompt:`(Dans Chrome, avec l'extension Claude)
+
+Va sur le site officiel du Haut-Commissariat au Plan (hcp.ma) et relève le taux de chômage par région le plus récent publié.
+Pour chaque région : taux, période de référence, lien exact de la page ou du document.
+Ne complète aucune valeur que tu n'as pas trouvée : écris « non trouvé ».
+
+Présente le résultat sous forme de tableau, que j'ajouterai dans un onglet Contexte du tableau de bord, en face de chaque agence.`,
+      check:'Ouvrez le lien source d’au moins une région pour confirmer le chiffre.' },
+    { n:'4.2', name:'Skill mensuel', tool:'auto', dur:'40 min', out:'Skill + tâche planifiée',
+      prompt:`Transforme le travail des exercices 1.1 et 1.3 en skill réutilisable nommé « tableau-de-bord-agences » :
+- entrée : un fichier au même format que Cas3_Pilotage_activite.xlsx ;
+- étapes : nettoyage avec journal, calcul des indicateurs, classement des agences, synthèse de 5 constats, contrôles de cohérence ;
+- sortie : TDB_direction_[mois].xlsx.
+
+Montre-moi le texte du skill avant de l'enregistrer.
+Crée ensuite une tâche planifiée qui lance ce skill le 5 de chaque mois sur le fichier du mois précédent déposé dans le dossier [NOM DU DOSSIER].`,
+      check:'Lancez le skill une fois à la main sur le fichier du cas avant de le planifier.' }
+  ]
+};
+
+/* ======================================================================
+   CAS 4 — Responsable taxe 
+   ====================================================================== */
+const CAS4 = {
+  id:'cas4', num:'CAS 4', title:'Suivi d’un recouvrement',
+  profile:'Responsable taxe', initial:'RT',
+  context:'Vous suivez le recouvrement de la taxe de formation professionnelle d’un portefeuille fictif de 3 000 entreprises, ainsi que les demandes de remboursement au titre des actions de formation. Vous devez produire l’état de recouvrement, prioriser les relances et contrôler les dossiers de remboursement.',
+  files:[
+    { name:'Cas4_Suivi_recouvrement.xlsx', sheets:[
+      ['Recouvrement_TFP','3 000 entreprises : région, secteur, effectif, masse salariale 2025, taxe due, montant recouvré, retard, statut'],
+      ['Demandes_remboursement','250 dossiers de remboursement d’actions de formation : montants demandés et accordés, statut, délais'],
+      ['Parametres','Taux de la taxe retenu pour l’exercice']
+    ]}
+  ],
+  rules:[
+    'Taxe due = masse salariale × 1,6 % (taux retenu pour l’exercice, voir onglet Parametres ; à vérifier sur les textes en vigueur).',
+    'Reste à recouvrer = taxe due − montant recouvré.',
+    'Raisons sociales inventées. En situation réelle : pseudonymiser les entreprises avant analyse et ne jamais envoyer de relance sans validation.'
+  ],
+  exercises:[
+    { n:'1.1', name:'Exploration', tool:'cowork', dur:'30 min', out:'controles_TFP.xlsx',
+      prompt:`Je travaille sur Cas4_Suivi_recouvrement.xlsx. Lis d'abord l'onglet Consignes.
+
+Sur l'onglet Recouvrement_TFP :
+1. Recalcule la taxe due = Masse_salariale_2025 × taux de l'onglet Parametres. Liste les écarts avec la colonne Taxe_due (tolérance : 1 MAD).
+2. Liste les montants recouvrés supérieurs à la taxe due.
+3. Repère les régions mal libellées en les comparant aux 12 régions du Maroc, avec une proposition de correction.
+4. Repère les valeurs vides et les lignes en double.
+
+Crée controles_TFP.xlsx : un onglet par contrôle et un onglet Synthese (nombre de cas, montant concerné).` + REMINDER,
+      check:'Après correction des libellés, il doit rester 12 régions distinctes.' },
+    { n:'1.3', name:'État de recouvrement', tool:'cowork', dur:'60 min', out:'etat_recouvrement_2025.xlsx',
+      prompt:`À partir des données corrigées (rappelle-moi les règles appliquées) :
+1. Taux de recouvrement (recouvré / dû) par région et par secteur.
+2. Reste à recouvrer par ancienneté du retard : 0–3, 3–6, 6–12 et plus de 12 mois. Précise dans quelle tranche tombent les bornes.
+3. Top 50 des entreprises par reste à recouvrer, avec région, secteur et retard.
+4. Graphiques : taux par région, reste à recouvrer par tranche.
+5. Synthèse de 5 lignes.
+
+Crée etat_recouvrement_2025.xlsx.` + REMINDER,
+      check:'La somme des 4 tranches doit être égale au reste à recouvrer total.' },
+    { n:'1.4', name:'Contrôle des remboursements', tool:'cowork', dur:'40 min', out:'Onglet Controle_remboursements',
+      prompt:`Rapproche l'onglet Demandes_remboursement du fichier Recouvrement_TFP (clé : ID_entreprise) :
+1. Dossiers d'entreprises absentes du fichier principal.
+2. Dossiers dont le montant accordé dépasse le montant demandé.
+3. Entreprises en retard de paiement de la TFP ayant obtenu un remboursement (montant et retard).
+4. Délai moyen et médian de traitement par statut et par type d'action.
+
+Ajoute un onglet Controle_remboursements : une ligne par dossier signalé, avec le motif.` + REMINDER,
+      check:'Un même dossier peut cumuler plusieurs motifs : demandez à Claude de les afficher tous.' },
+    { n:'1.6', name:'Plan de relance', tool:'cowork', dur:'40 min', out:'plan_relance.xlsx + modeles.docx',
+      prompt:`À partir de etat_recouvrement_2025.xlsx :
+1. Segmente les entreprises en retard selon deux critères : montant restant (3 niveaux, propose-moi les seuils) × ancienneté du retard.
+2. Propose un ordre de relance (priorité 1 à 4) et justifie-le.
+3. Rédige 3 modèles de courrier en français administratif : rappel courtois, relance, mise en demeure. Utilise des champs de fusion : {Raison_sociale}, {Montant_restant}, {Retard_mois}, {Date_limite}.
+
+Crée plan_relance.xlsx (liste priorisée, prête pour le publipostage) et modeles.docx.
+Aucun envoi : les courriers restent des projets à valider.`,
+      check:'Relisez le ton de la mise en demeure : il doit rester factuel et conforme à vos procédures internes.' },
+    { n:'2.3', name:'Tableau de suivi', tool:'excel', dur:'30 min', out:'Onglet Suivi',
+      prompt:`(Dans Excel, avec le panneau Claude, classeur de recouvrement ouvert)
+
+Crée un onglet Suivi construit avec des formules SOMME.SI.ENS qui renvoient aux données :
+- en lignes les régions, en colonnes les statuts : montant dû et montant recouvré ;
+- une colonne « Taux de recouvrement » ;
+- une mise en forme conditionnelle en rouge sous 70 %.
+
+Le tableau doit se mettre à jour quand les données changent. Explique chaque formule et teste-la en modifiant une ligne.`,
+      check:'Le total du tableau Suivi doit correspondre au total de l’état de recouvrement 1.3.' },
+    { n:'2.7', name:'Veille réglementaire', tool:'chrome', dur:'30 min', out:'fiche_veille.docx',
+      prompt:`(Dans Chrome, avec l'extension Claude)
+
+Recherche sur les sites officiels (Secrétariat général du gouvernement / Bulletin officiel, ministère chargé de la formation professionnelle, Direction générale des impôts) les textes récents relatifs à la taxe de formation professionnelle et à la formation continue.
+
+Pour chaque texte : référence, date, objet, ce qui change, lien exact.
+N'utilise que des sources officielles et signale ce que tu n'as pas pu vérifier.
+Présente le résultat sous forme de fiche de synthèse sourcée, que j'enregistrerai dans fiche_veille.docx.`,
+      check:'Vérifiez que le taux de 1,6 % utilisé dans l’exercice correspond aux textes trouvés.' },
+    { n:'4.2', name:'État mensuel automatique', tool:'auto', dur:'40 min', out:'Skill + tâche planifiée',
+      prompt:`Transforme l'exercice 1.3 en skill réutilisable nommé « etat-recouvrement-TFP » : contrôles, taux par région et par secteur, tranches de retard, top 50, synthèse.
+
+Ajoute une alerte en tête de la synthèse si le taux de recouvrement global baisse de plus de 2 points par rapport au mois précédent. Conserve l'historique des taux dans un fichier dédié.
+
+Montre-moi le texte du skill avant de l'enregistrer.
+Crée ensuite une tâche planifiée qui le lance au début de chaque mois sur le fichier le plus récent du dossier [NOM DU DOSSIER].`,
+      check:'Testez l’alerte : modifiez l’historique pour simuler une baisse de 3 points.' }
+  ]
+};
+
+/* ======================================================================
+   CAS 5 — Responsable des marchés 
+   ====================================================================== */
+const CAS5 = {
+  id:'cas5', num:'CAS 5', title:'Suivi des achats publics',
+  profile:'Responsable des marchés', initial:'RM',
+  context:'Vous gérez les marchés d’une direction fictive : 120 procédures lancées en 2025, dont l’AO 12/2025 d’acquisition de matériel informatique pour lequel 5 soumissionnaires ont déposé un bordereau des prix. Vous devez fiabiliser le suivi, analyser les délais et préparer l’analyse comparative des offres pour la commission.',
+  files:[
+    { name:'Cas5_Suivi_achats.xlsx', sheets:[
+      ['Marches_2025','Suivi des 120 procédures : estimation, dates clés, attributaire, montants, délais, ordre de service, réception, paiements'],
+      ['Bordereau_AO12','Prix unitaires HT de l’estimation et des 5 soumissionnaires, ligne par ligne (20 prix)']
+    ]},
+    { name:'Cas5_Documents_offres.pdf', sheets:[['5 bordereaux','Bordereaux des prix des soumissionnaires de l’AO 12/2025']] }
+  ],
+  rules:[
+    'Montant d’une offre = somme (quantité × prix unitaire) ; en cas de discordance, le montant recalculé sert à l’analyse (règle usuelle, à confirmer avec la réglementation applicable).',
+    'Retard de réception = date de réception provisoire − (date d’ordre de service + délai d’exécution).',
+    'Toutes les entreprises et références sont fictives.',
+    'Confidentialité : les offres réelles ne doivent jamais être traitées hors des outils validés par l’organisme, et aucun agent ne soumet ou ne modifie une procédure.'
+  ],
+  exercises:[
+    { n:'1.1', name:'Exploration', tool:'cowork', dur:'30 min', out:'controles_marches.xlsx',
+      prompt:`Je travaille sur Cas5_Suivi_achats.xlsx. Lis d'abord l'onglet Consignes.
+
+Sur l'onglet Marches_2025 :
+1. Dates incohérentes : attribution avant l'ouverture des plis, ouverture avant la publication, réception avant l'ordre de service.
+2. Montant attribué manquant pour un marché qui n'est pas infructueux.
+3. Montant payé supérieur au montant attribué.
+4. Attributaires mal libellés (variantes d'un même nom), avec une proposition de nom unique.
+5. Doublons.
+
+Crée controles_marches.xlsx : un onglet par contrôle et un onglet Synthese.` + REMINDER,
+      check:'Les marchés infructueux ne doivent pas être signalés comme « montant manquant ».' },
+    { n:'1.3', name:'Suivi des marchés', tool:'cowork', dur:'60 min', out:'suivi_marches_2025.xlsx',
+      prompt:`À partir des données corrigées :
+1. Par type (travaux, fournitures, services) et par mode de passation : nombre de procédures, estimation, montant attribué, écart attribution / estimation en %, nombre d'infructueux.
+2. Délai moyen publication → attribution.
+3. Marchés en retard de réception : retard = réception provisoire − (ordre de service + délai d'exécution).
+4. Taux de paiement (payé / attribué).
+5. Graphiques et synthèse de 5 constats.
+
+Crée suivi_marches_2025.xlsx.` + REMINDER,
+      check:'Calculez à la main le retard d’un marché de la liste pour vérifier la formule.' },
+    { n:'1.4', name:'Analyse des offres AO 12', tool:'cowork', dur:'45 min', out:'analyse_offres_AO12.xlsx',
+      prompt:`Sur l'onglet Bordereau_AO12 (AO 12/2025, matériel informatique, 5 soumissionnaires) :
+1. Recalcule chaque ligne (quantité × prix unitaire) et le total HT de chaque offre. Signale toute différence avec le montant déclaré.
+2. Compare chaque prix unitaire à l'estimation (écart en %).
+3. Propose des seuils pour « prix anormalement bas » et « prix excessif », et attends la validation du groupe avant de signaler quoi que ce soit.
+4. Classe les offres sur le montant recalculé.
+
+Crée analyse_offres_AO12.xlsx. Reste factuel : tu signales, la commission décide.` + REMINDER,
+      check:'Le classement doit utiliser le total recalculé, pas le total déclaré.' },
+    { n:'1.5', name:'Extraction des bordereaux PDF', tool:'cowork', dur:'30 min', out:'bordereaux_extraits.xlsx',
+      prompt:`Fichier : Cas5_Documents_offres.pdf.
+1. Extrais les 5 bordereaux des prix vers Excel : soumissionnaire, n° de prix, désignation, unité, quantité, prix unitaire HT, montant HT, total déclaré.
+2. Compare ligne à ligne avec l'onglet Bordereau_AO12 et liste toutes les différences (contrôle de saisie).
+3. Indique les valeurs dont la lecture était incertaine.
+
+Crée bordereaux_extraits.xlsx : un onglet par soumissionnaire et un onglet Ecarts.` + REMINDER,
+      check:'Comparez un bordereau entier du PDF à l’extraction, prix par prix.' },
+    { n:'1.6', name:'Projet de rapport', tool:'cowork', dur:'30 min', out:'rapport_analyse.docx',
+      prompt:`À partir de analyse_offres_AO12.xlsx, rédige rapport_analyse.docx, projet de rapport d'analyse des offres financières de l'AO 12/2025 :
+objet, soumissionnaires, méthode de vérification, corrections arithmétiques, comparaison à l'estimation, offres à examiner (prix anormalement bas ou excessifs), classement.
+
+Ton neutre et factuel, sans recommandation d'attribution.
+Indique en en-tête : « Projet — à relire et valider par la commission ».`,
+      check:'Chaque montant du rapport doit renvoyer à une cellule de analyse_offres_AO12.xlsx.' },
+    { n:'2.6', name:'Veille appels d’offres', tool:'chrome', dur:'40 min', out:'veille_AO.xlsx',
+      prompt:`(Dans Chrome, avec l'extension Claude)
+
+Sur le portail marocain des marchés publics (marchespublics.gov.ma), relève 10 appels d'offres récents portant sur l'acquisition de matériel informatique.
+Pour chacun : acheteur, référence, objet, estimation, date limite, lien.
+N'invente aucune valeur manquante : écris « non indiqué ».
+
+Présente le résultat sous forme de tableau, que je reprendrai dans veille_AO.xlsx pour comparer ces estimations à celle de l'AO 12/2025.`,
+      check:'Ouvrez deux liens pour confirmer l’estimation et la date limite.' },
+    { n:'4.1', name:'Skill « analyse de bordereau »', tool:'auto', dur:'40 min', out:'Skill',
+      prompt:`Transforme l'exercice 1.4 en skill réutilisable nommé « analyse-bordereau-prix » :
+- entrée : un bordereau au même format que l'onglet Bordereau_AO12 ;
+- étapes : recalcul des lignes et des totaux, écarts à l'estimation, seuils paramétrables (anormalement bas / excessif), classement ;
+- sortie : un classeur d'analyse et un résumé factuel.
+
+Le skill ne soumet ni ne modifie aucune procédure.
+Montre-moi le texte du skill avant de l'enregistrer, puis teste-le sur Bordereau_AO12.`,
+      check:'Le test sur Bordereau_AO12 doit redonner les mêmes résultats que votre exercice 1.4.' }
+  ]
+};
+
+const CASES = [CAS1, CAS2, CAS3, CAS4, CAS5];
+
+/* Parcours: bloc -> tool families; exercises assigned per case by tool/number */
+const BLOCS = [
+  { title:'Bloc 1 · Explorer et nettoyer', tool:'cowork', pick:ex => ex.tool==='cowork' && (ex.n==='1.1' || ex.n==='1.2') },
+  { title:'Bloc 1 · Analyser et restituer', tool:'cowork', pick:ex => ex.tool==='cowork' && !(ex.n==='1.1' || ex.n==='1.2') },
+  { title:'Bloc 2 · Formules et simulations', tool:'excel', pick:ex => ex.tool==='excel' },
+  { title:'Bloc 2 · Recherche web sourcée', tool:'chrome', pick:ex => ex.tool==='chrome' },
+  { title:'Bloc 3 · Premiers pas en code', tool:'code', pick:ex => ex.tool==='code' },
+  { title:'Bloc 4 · Automatiser', tool:'auto', pick:ex => ex.tool==='auto' }
+];
+
+const THEORY = [
+  { num:'Réflexe 1', title:'Du code pour chaque chiffre', text:'Demandez à Claude de calculer avec du code plutôt que « de tête », puis de valider : doublons, vides, total recalculé par une autre méthode.', chips:['« Utilise du code »','Total recalculé','Doublons / vides'] },
+  { num:'Réflexe 2', title:'Relire le plan avant de valider', text:'Claude propose un plan avant d’agir. Lisez-le, corrigez-le, et tranchez vous-même les règles métier (une note « ABS », un seuil de prix anormal).', chips:['Arbitrages métier','Journal des corrections','Pas de modification cachée'] },
+  { num:'Réflexe 3', title:'Confidentialité des données', text:'Ici, toutes les données sont fictives. Dans votre service : agrégats plutôt que fiches nominatives, pseudonymisation, et uniquement dans un environnement validé par votre organisme.', chips:['Données fictives ici','Pseudonymiser','Aucun envoi sans validation'] }
+];
+
+/* ======================================================================
+   RENDER
+   ====================================================================== */
+function el(tag, cls, html){
+  const e = document.createElement(tag);
+  if(cls) e.className = cls;
+  if(html !== undefined) e.innerHTML = html;
+  return e;
+}
+const store = {
+  get(k){ try{ return localStorage.getItem(k); }catch(e){ return null; } },
+  set(k,v){ try{ localStorage.setItem(k,v); }catch(e){} }
+};
+let copyCounter = 0;
+const cardApi = {};
+
+function toolTag(t){ const x = TOOLS[t]; return `<span class="tag ${x.cls}">${x.label}</span>`; }
+
+function copyPrompt(btn, text){
+  const done = () => {
+    const original = btn.innerHTML;
+    btn.classList.add('copied');
+    btn.innerHTML = `${ICONS.check}<span>Copié</span>`;
+    setTimeout(() => { btn.classList.remove('copied'); btn.innerHTML = original; }, 1800);
+  };
+  try{
+    navigator.clipboard.writeText(text).then(done).catch(() => fallbackCopy(text, done, btn));
+  }catch(e){ fallbackCopy(text, done, btn); }
+}
+function fallbackCopy(text, done, btn){
+  const ta = document.createElement('textarea');
+  ta.value = text; ta.setAttribute('readonly','');
+  ta.style.position='fixed'; ta.style.opacity='0';
+  document.body.appendChild(ta); ta.select();
+  let ok = false;
+  try{ ok = document.execCommand('copy'); }catch(e){}
+  document.body.removeChild(ta);
+  if(ok){ done(); }
+  else {
+    const pre = btn.closest('.prompt-block').querySelector('.prompt-pre');
+    const r = document.createRange(); r.selectNodeContents(pre);
+    const s = window.getSelection(); s.removeAllRanges(); s.addRange(r);
+    btn.querySelector('span').textContent = 'Texte sélectionné, faites Ctrl+C';
+  }
+}
+
+function buildExercise(ex){
+  const w = el('div');
+  w.appendChild(el('div','ex-title', `${ex.n} — ${ex.name}`));
+  const meta = el('div','variant-meta');
+  meta.innerHTML = `<span>🛠️ Outil : <b>${TOOLS[ex.tool].label}</b></span><span>⏱️ Durée : <b>${ex.dur}</b></span><span>📄 Livrable : <b>${ex.out}</b></span>`;
+  w.appendChild(meta);
+
+  const block = el('div','prompt-block');
+  const head = el('div','prompt-head');
+  head.innerHTML = `<span class="prompt-head-label">Prompt proposé</span>`;
+  const btn = el('button','copy-btn');
+  btn.type = 'button';
+  btn.id = 'copy-' + (copyCounter++);
+  btn.innerHTML = `${ICONS.copy}<span>Copier</span>`;
+  btn.addEventListener('click', () => copyPrompt(btn, ex.prompt));
+  head.appendChild(btn);
+  block.appendChild(head);
+  const pre = el('pre','prompt-pre');
+  pre.textContent = ex.prompt;
+  block.appendChild(pre);
+  const hint = el('div','hint-line');
+  hint.innerHTML = `${ICONS.info}<span>Une aide, pas une obligation : adaptez le prompt à votre façon de travailler.</span>`;
+  block.appendChild(hint);
+  hint.style.paddingBottom='12px';
+  w.appendChild(block);
+
+  if(ex.check){
+    const c = el('div','check-box');
+    c.innerHTML = `${ICONS.check}<div><b>Contrôle rapide :</b> ${ex.check}</div>`;
+    w.appendChild(c);
+  }
+  return w;
+}
+
+
+/* ---------- Téléchargements ---------- */
+const DL_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12m0 0 4-4m-4 4-4-4M4 17v3h16v-3"/></svg>';
+const CAHIER = { name:'Cahier_exercices.pdf' };
+const CASE_FILES = {
+  cas1:['Cas1_Donnees_pedagogiques.xlsx'],
+  cas2:['Cas2_Dossier_comptable.xlsx','Cas2_Pieces_justificatives.pdf'],
+  cas3:['Cas3_Pilotage_activite.xlsx'],
+  cas4:['Cas4_Suivi_recouvrement.xlsx'],
+  cas5:['Cas5_Suivi_achats.xlsx','Cas5_Documents_offres.pdf']
+};
+let downloadsApi = null, jszipReady = false;
+const dlButtons = [], zipButtons = [];
+function dlMsg(t){ const m = document.getElementById('dl-msg'); if(m) m.textContent = t || ''; }
+async function fetchFile(name){
+  const r = await fetch('fichiers/' + name);
+  if(!r.ok) throw new Error('fetch');
+  return await r.blob();
+}
+function dlError(e){
+  const c = e && e.code;
+  if(c === 'declined') return;
+  if(c === 'rate_limited') dlMsg('Une confirmation est déjà ouverte. Répondez-y, puis recommencez.');
+  else dlMsg('Le téléchargement n’a pas abouti. Réessayez, ou demandez le fichier à la formatrice.');
+}
+async function downloadZip(caseId, btn){
+  dlMsg('');
+  try{
+    const zip = new JSZip();
+    for(const n of CASE_FILES[caseId]) zip.file(n, await fetchFile(n));
+    const blob = await zip.generateAsync({ type:'blob' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = 'Atelier_Claude_' + caseId.replace('cas','Cas') + '.zip';
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 4000);
+    markDone(btn);
+  }catch(e){ dlError(e); }
+}
+function markDone(btn){
+  const old = btn.innerHTML;
+  btn.classList.add('done');
+  btn.innerHTML = ICONS.check + '<span>Enregistré</span>';
+  setTimeout(() => { btn.classList.remove('done'); btn.innerHTML = old; }, 2200);
+}
+function makeDlBtn(name){
+  const b = el('a','dl-btn', DL_ICON + '<span>Télécharger</span>');
+  b.href = 'fichiers/' + name;
+  b.setAttribute('download', name);
+  b.setAttribute('aria-label','Télécharger ' + name);
+  return b;
+}
+function makeZipBtn(caseId){
+  const b = el('button','dl-btn', DL_ICON + '<span>Tout en .zip</span>');
+  b.type = 'button';
+  b.hidden = !(downloadsApi && jszipReady);
+  b.addEventListener('click', () => downloadZip(caseId, b));
+  zipButtons.push(b);
+  return b;
+}
+function refreshDlButtons(){
+  zipButtons.forEach(b => b.hidden = !(downloadsApi && jszipReady));
+  const m = document.getElementById('dl-unavailable');
+  if(m) m.hidden = !!downloadsApi;
+}
+function renderDownloads(){
+  const box = document.getElementById('dl-list');
+  const first = el('div','dl-card');
+  first.innerHTML = '<h3>Cahier d’exercices</h3><div class="who">Pour tous les participants · les 5 cas en PDF</div>';
+  const fl = el('div','dl-files');
+  const row = el('div','dl-file'); row.innerHTML = '<code>' + CAHIER.name + '</code>';
+  row.appendChild(makeDlBtn(CAHIER.name));
+  fl.appendChild(row); first.appendChild(fl);
+  box.appendChild(first);
+  CASES.forEach(cs => {
+    const c = el('div','dl-card');
+    c.innerHTML = '<h3>' + cs.num.replace('CAS','Cas') + ' — ' + cs.title + '</h3><div class="who">' + cs.profile + '</div>';
+    const list = el('div','dl-files');
+    CASE_FILES[cs.id].forEach(n => {
+      const r = el('div','dl-file'); r.innerHTML = '<code>' + n + '</code>';
+      r.appendChild(makeDlBtn(n));
+      list.appendChild(r);
+    });
+    c.appendChild(list);
+    if(CASE_FILES[cs.id].length > 1){
+      const z = el('div','dl-file');
+      z.appendChild(makeZipBtn(cs.id));
+      c.appendChild(z);
+    }
+    box.appendChild(c);
+  });
+  const un = el('p','dl-msg','Le téléchargement direct n’est pas disponible dans cet affichage. Ouvrez la page dans votre navigateur, ou demandez les fichiers à la formatrice.');
+  un.id = 'dl-unavailable'; un.hidden = true;
+  un.style.display = 'block';
+  document.getElementById('fichiers').querySelector('.wrap').appendChild(un);
+}
+async function initDownloads(){
+  downloadsApi = true;
+  refreshDlButtons();
+  const sc = document.createElement('script');
+  sc.src = 'https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js';
+  sc.onload = () => { jszipReady = typeof JSZip !== 'undefined'; refreshDlButtons(); };
+  document.head.appendChild(sc);
+}
+
+function buildCard(cs){
+  const card = el('div','card');
+  card.id = cs.id;
+  const tools = [...new Set(cs.exercises.map(e => e.tool))];
+  const head = el('button','card-head');
+  head.type = 'button';
+  head.setAttribute('aria-expanded','false');
+  head.innerHTML = `
+    <span class="uc-num">${cs.num}</span>
+    <span class="card-head-main">
+      <span class="card-title" style="display:block">${cs.title}</span>
+      <span class="card-tags">
+        <span class="tag tag-tool">👤 ${cs.profile}</span>
+        ${tools.map(toolTag).join('')}
+      </span>
+    </span>
+    <span class="chevron">${ICONS.chevron}</span>`;
+  const body = el('div','card-body');
+  body.appendChild(el('div','problem', `<b>Contexte :</b> ${cs.context}`));
+
+  body.appendChild(el('div','block-title','Fichiers et onglets'));
+  const files = el('div','files');
+  cs.files.forEach(f => {
+    const fr = el('div','file-row is-file', `<code>${f.name}</code>`);
+    const cell = el('span','dl-cell'); cell.appendChild(makeDlBtn(f.name)); fr.appendChild(cell);
+    files.appendChild(fr);
+    f.sheets.forEach(s => files.appendChild(el('div','file-row', `<code>${s[0]}</code><span>${s[1]}</span>`)));
+  });
+  body.appendChild(files);
+
+  body.appendChild(el('div','block-title','Règles métier de l’exercice'));
+  const nb = el('div','note-box');
+  nb.innerHTML = `${ICONS.warn}<ul class="rules">${cs.rules.map(r => `<li>${r}</li>`).join('')}</ul>`;
+  body.appendChild(nb);
+
+  body.appendChild(el('div','block-title','Exercices'));
+  const tabs = el('div','tabs');
+  tabs.setAttribute('role','tablist');
+  const host = el('div','variant-content');
+  const btns = [];
+  const show = i => {
+    btns.forEach((b,j) => { b.classList.toggle('active', i===j); b.setAttribute('aria-selected', i===j ? 'true':'false'); });
+    host.innerHTML = '';
+    host.appendChild(buildExercise(cs.exercises[i]));
+  };
+  cs.exercises.forEach((ex, i) => {
+    const tb = el('button','tab-btn', `${ex.n} · ${ex.name}`);
+    tb.type = 'button';
+    tb.setAttribute('role','tab');
+    tb.addEventListener('click', () => show(i));
+    btns.push(tb); tabs.appendChild(tb);
+  });
+  body.appendChild(tabs);
+  body.appendChild(host);
+  show(0);
+
+  const setOpen = open => {
+    card.classList.toggle('is-open', open);
+    head.setAttribute('aria-expanded', open ? 'true':'false');
+  };
+  head.addEventListener('click', () => setOpen(!card.classList.contains('is-open')));
+  card.appendChild(head);
+  card.appendChild(body);
+
+  cardApi[cs.id] = {
+    open(exN){
+      setOpen(true);
+      if(exN){ const i = cs.exercises.findIndex(e => e.n === exN); if(i >= 0) show(i); }
+      const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      card.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block:'start' });
+    }
+  };
+  return card;
+}
+
+function markMine(id){
+  document.querySelectorAll('.profile-tile').forEach(t => t.classList.toggle('is-mine', t.dataset.id === id));
+  document.querySelectorAll('.matrix td[data-case]').forEach(td => td.classList.toggle('is-mine', td.dataset.case === id));
+}
+
+function renderProfiles(){
+  const box = document.getElementById('profiles');
+  CASES.forEach(cs => {
+    const t = el('button','profile-tile');
+    t.type = 'button';
+    t.dataset.id = cs.id;
+    t.innerHTML = `
+      <span class="pt-top"><span class="pt-initial">${cs.initial}</span><span class="pt-mine">Mon cas</span></span>
+      <span class="pt-who">${cs.profile}</span>
+      <span class="pt-case">${cs.num.replace('CAS','Cas')} — ${cs.title}</span>
+      <span class="pt-go">Ouvrir mon cas →</span>`;
+    t.addEventListener('click', () => {
+      store.set('atelier-mon-cas', cs.id);
+      markMine(cs.id);
+      cardApi[cs.id].open();
+    });
+    box.appendChild(t);
+  });
+}
+
+function renderMatrix(){
+  const tb = document.getElementById('matrix');
+  let h = '<thead><tr><th scope="col">Bloc</th>';
+  CASES.forEach(cs => { h += `<th scope="col">${cs.num.replace('CAS','Cas')}<small>${cs.profile}</small></th>`; });
+  h += '</tr></thead><tbody>';
+  BLOCS.forEach(b => {
+    h += `<tr><th scope="row">${b.title}<br>${toolTag(b.tool)}</th>`;
+    CASES.forEach(cs => {
+      const list = cs.exercises.filter(b.pick);
+      h += `<td data-case="${cs.id}">` + (list.length
+        ? list.map(ex => `<button type="button" class="ex-pill" data-case="${cs.id}" data-ex="${ex.n}" title="${ex.name} · ${ex.dur}">${ex.n}</button>`).join('')
+        : '<span class="none">—</span>') + '</td>';
+    });
+    h += '</tr>';
+  });
+  h += '</tbody>';
+  tb.innerHTML = h;
+  tb.querySelectorAll('.ex-pill').forEach(p => p.addEventListener('click', () => cardApi[p.dataset.case].open(p.dataset.ex)));
+}
+
+function renderTheory(){
+  const box = document.getElementById('theory-grid');
+  THEORY.forEach(t => {
+    const c = el('div','theory-card');
+    c.innerHTML = `<span class="th-num">${t.num}</span><h3>${t.title}</h3><p>${t.text}</p><div class="chip-list">${t.chips.map(x => `<span>${x}</span>`).join('')}</div>`;
+    box.appendChild(c);
+  });
+}
+
+function renderLegend(){
+  const box = document.getElementById('legend');
+  [['var(--accent)','Cowork'],['var(--ok)','Claude in Excel'],['var(--tim)','Claude in Chrome'],['var(--bonus)','Claude Code (mode guidé)'],['var(--warn)','Automatisation : skill et tâche planifiée']].forEach(([c,l]) => {
+    const s = el('span'); s.innerHTML = `<span class="legend-dot" style="background:${c}"></span>${l}`; box.appendChild(s);
+  });
+}
+
+renderProfiles();
+renderMatrix();
+renderLegend();
+const grid = document.getElementById('grid-cas');
+CASES.forEach(cs => grid.appendChild(buildCard(cs)));
+renderTheory();
+renderDownloads();
+initDownloads();
+
+const mine = store.get('atelier-mon-cas');
+if(mine && cardApi[mine]) markMine(mine);
+const hash = (location.hash || '').slice(1);
+if(cardApi[hash]) cardApi[hash].open();
+
+const ta = document.getElementById('reflect-text');
+const saved = store.get('atelier-reflexion');
+if(saved) ta.value = saved;
+ta.addEventListener('input', () => store.set('atelier-reflexion', ta.value));
+</script>
+</body>
+</html>
